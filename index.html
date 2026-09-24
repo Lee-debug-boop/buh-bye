@@ -1,0 +1,2206 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>THE GOODBYE</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Libre+Baskerville:ital@0;1&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #050505;
+    color: #e8e8e8;
+}
+
+body {
+    font-family: "IBM Plex Mono", monospace;
+}
+
+/* =========================
+   WARNING SCREEN
+========================= */
+
+#warning {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background:
+        radial-gradient(
+            circle at center,
+            #111 0%,
+            #070707 45%,
+            #000 100%
+        );
+
+    transition:
+        opacity 2s ease,
+        visibility 2s ease;
+}
+
+.warning-box {
+    width: min(650px, 85%);
+    text-align: center;
+}
+
+.warning-symbol {
+    font-size: 28px;
+    opacity: .7;
+    margin-bottom: 30px;
+}
+
+.warning-title {
+    font-size: 13px;
+    letter-spacing: 7px;
+    margin-bottom: 35px;
+}
+
+.warning-text {
+    font-size: 11px;
+    line-height: 2;
+    letter-spacing: 1px;
+    color: #888;
+    max-width: 550px;
+    margin: auto;
+}
+
+.warning-small {
+    margin-top: 30px;
+    font-size: 9px;
+    color: #555;
+    letter-spacing: 2px;
+}
+
+#accept {
+    margin-top: 45px;
+
+    background: transparent;
+    color: #aaa;
+
+    border: 1px solid #333;
+
+    padding: 14px 40px;
+
+    font-family: inherit;
+    font-size: 10px;
+    letter-spacing: 4px;
+
+    cursor: pointer;
+
+    transition:
+        background .4s ease,
+        color .4s ease,
+        border-color .4s ease;
+}
+
+#accept:hover {
+    background: #eee;
+    color: #000;
+    border-color: #eee;
+}
+
+#warning.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* =========================
+   MAIN EXPERIENCE
+========================= */
+
+#experience {
+    position: fixed;
+    inset: 0;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition: opacity 4s ease;
+}
+
+#experience.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* =========================
+   BACKGROUND
+========================= */
+
+#background {
+    position: absolute;
+    inset: -5%;
+
+    background-size: cover;
+    background-position: center;
+
+    filter:
+        blur(18px)
+        brightness(.42)
+        saturate(.65);
+
+    transform: scale(1.08);
+
+    transition:
+        background-image 3s ease,
+        filter 5s ease;
+}
+
+#background::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0,0,0,.75),
+            rgba(0,0,0,.28),
+            rgba(0,0,0,.75)
+        );
+}
+
+/* =========================
+   FILM GRAIN
+========================= */
+
+#grain {
+    position: absolute;
+    inset: -50%;
+
+    pointer-events: none;
+
+    opacity: .09;
+
+    background-image:
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
+
+    animation: grain .25s steps(2) infinite;
+}
+
+@keyframes grain {
+    0% {
+        transform: translate(0,0);
+    }
+
+    25% {
+        transform: translate(-2%,2%);
+    }
+
+    50% {
+        transform: translate(2%,-1%);
+    }
+
+    75% {
+        transform: translate(1%,2%);
+    }
+
+    100% {
+        transform: translate(-1%,-2%);
+    }
+}
+
+/* =========================
+   VIGNETTE
+========================= */
+
+#vignette {
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            transparent 35%,
+            rgba(0,0,0,.5) 100%
+        );
+}
+
+/* =========================
+   CREDITS
+========================= */
+
+#credits-window {
+    position: absolute;
+    inset: 0;
+
+    overflow: hidden;
+
+    mask-image:
+        linear-gradient(
+            to bottom,
+            transparent 0%,
+            black 12%,
+            black 88%,
+            transparent 100%
+        );
+}
+
+#credits {
+    position: absolute;
+
+    width: 100%;
+    padding: 100vh 8% 100vh;
+
+    text-align: center;
+
+    transform: translateY(0);
+}
+
+.credit {
+    max-width: 850px;
+    margin: 0 auto 22vh;
+}
+
+.credit.year {
+    margin-bottom: 12vh;
+}
+
+.credit h1 {
+    font-family: "Libre Baskerville", serif;
+
+    font-size: clamp(30px, 5vw, 65px);
+
+    font-weight: 400;
+
+    letter-spacing: 8px;
+
+    margin-bottom: 25px;
+}
+
+.credit h2 {
+    font-size: 10px;
+    font-weight: 400;
+
+    letter-spacing: 6px;
+
+    color: #aaa;
+
+    margin-bottom: 35px;
+}
+
+.credit p {
+    font-family: "Libre Baskerville", serif;
+
+    font-size: clamp(15px, 1.7vw, 21px);
+
+    line-height: 2.25;
+
+    color: #ddd;
+
+    font-weight: 400;
+}
+
+.credit .tiny {
+    font-family: "IBM Plex Mono", monospace;
+
+    font-size: 9px;
+
+    line-height: 2.2;
+
+    letter-spacing: 3px;
+
+    color: #777;
+}
+
+/* =========================
+   DARK MEMORY GLITCH
+========================= */
+
+.dark-memory {
+    position: relative;
+
+    display: inline-block;
+
+    color: #aaa;
+
+    letter-spacing: 1px;
+
+    animation:
+        memory-flicker 4s infinite,
+        memory-shift 5s infinite;
+}
+
+.dark-memory::after {
+    content: "";
+
+    position: absolute;
+
+    left: -5px;
+    right: -5px;
+    top: 50%;
+
+    height: 1px;
+
+    background: #555;
+
+    opacity: .4;
+
+    animation: memory-line 2.5s infinite;
+}
+
+@keyframes memory-flicker {
+
+    0%, 82%, 100% {
+        opacity: 1;
+    }
+
+    84% {
+        opacity: .35;
+    }
+
+    86% {
+        opacity: .8;
+    }
+
+    88% {
+        opacity: .25;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+}
+
+@keyframes memory-shift {
+
+    0%, 90%, 100% {
+        transform: translateX(0);
+    }
+
+    92% {
+        transform: translateX(-2px);
+    }
+
+    94% {
+        transform: translateX(2px);
+    }
+
+    96% {
+        transform: translateX(0);
+    }
+
+}
+
+@keyframes memory-line {
+
+    0%, 70%, 100% {
+        transform: scaleX(0);
+        opacity: 0;
+    }
+
+    75% {
+        transform: scaleX(1);
+        opacity: .6;
+    }
+
+    80% {
+        transform: scaleX(.2);
+        opacity: .15;
+    }
+
+}
+
+/* =========================
+   MY LOVE — YANDERE GLITCH
+========================= */
+
+.my-love {
+    display: inline-block;
+
+    position: relative;
+
+    color: #ff1a1a;
+
+    font-family: "IBM Plex Mono", monospace;
+
+    font-weight: 700;
+
+    letter-spacing: 5px;
+
+    text-transform: uppercase;
+
+    text-shadow:
+        0 0 5px rgba(255,0,0,.8),
+        0 0 15px rgba(255,0,0,.35);
+
+    animation:
+        love-flicker 2.8s infinite,
+        love-shake .18s infinite;
+}
+
+.my-love::before,
+.my-love::after {
+    content: "MY LOVE";
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 100%;
+
+    overflow: hidden;
+
+    opacity: .7;
+
+    pointer-events: none;
+}
+
+.my-love::before {
+    color: #ff0000;
+
+    transform: translate(-2px, 0);
+
+    clip-path: inset(0 0 55% 0);
+
+    animation: love-glitch-top 1.7s infinite steps(2);
+}
+
+.my-love::after {
+    color: #700000;
+
+    transform: translate(2px, 0);
+
+    clip-path: inset(55% 0 0 0);
+
+    animation: love-glitch-bottom 1.3s infinite steps(2);
+}
+
+@keyframes love-glitch-top {
+
+    0%, 70%, 100% {
+        transform: translate(-2px, 0);
+    }
+
+    72% {
+        transform: translate(7px, -2px);
+    }
+
+    74% {
+        transform: translate(-5px, 1px);
+    }
+
+    76% {
+        transform: translate(2px, 0);
+    }
+
+}
+
+@keyframes love-glitch-bottom {
+
+    0%, 60%, 100% {
+        transform: translate(2px, 0);
+    }
+
+    63% {
+        transform: translate(-8px, 2px);
+    }
+
+    66% {
+        transform: translate(5px, -1px);
+    }
+
+    69% {
+        transform: translate(2px, 0);
+    }
+
+}
+
+@keyframes love-flicker {
+
+    0%, 19%, 21%, 63%, 65%, 100% {
+        opacity: 1;
+    }
+
+    20% {
+        opacity: .35;
+    }
+
+    64% {
+        opacity: .55;
+    }
+
+}
+
+@keyframes love-shake {
+
+    0%, 100% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(.4px);
+    }
+
+}
+
+/* =========================
+   TITLE
+========================= */
+
+#opening-title {
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    pointer-events: none;
+
+    opacity: 0;
+
+    transition: opacity 4s ease;
+}
+
+#opening-title.visible {
+    opacity: 1;
+}
+
+#opening-title div {
+    text-align: center;
+}
+
+#opening-title h1 {
+    font-family: "Libre Baskerville", serif;
+
+    font-size: clamp(45px, 8vw, 110px);
+
+    font-weight: 400;
+
+    letter-spacing: 15px;
+}
+
+#opening-title span {
+    display: block;
+
+    margin-top: 20px;
+
+    font-size: 9px;
+
+    letter-spacing: 7px;
+
+    color: #aaa;
+}
+
+/* =========================
+   CONTROLS
+========================= */
+
+#controls {
+    position: absolute;
+
+    bottom: 30px;
+    right: 35px;
+
+    z-index: 20;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    gap: 12px;
+
+    opacity: 0;
+
+    transition: opacity 2s ease;
+}
+
+#controls.visible {
+    opacity: 1;
+}
+
+#music-control,
+#speed-control {
+    font-family: inherit;
+
+    font-size: 8px;
+
+    letter-spacing: 3px;
+
+    color: #888;
+
+    cursor: pointer;
+
+    user-select: none;
+
+    transition:
+        color .3s ease,
+        opacity .3s ease;
+}
+
+#music-control:hover,
+#speed-control:hover {
+    color: #eee;
+}
+
+#music-control:active,
+#speed-control:active {
+    transform: translateY(1px);
+}
+
+/* =========================
+   ENDING
+========================= */
+
+#ending {
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 30;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #000;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+        opacity 5s ease,
+        visibility 5s ease;
+}
+
+#ending.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.ending-content {
+    text-align: center;
+
+    max-width: 700px;
+
+    padding: 30px;
+}
+
+.ending-content p {
+    font-family: "Libre Baskerville", serif;
+
+    font-size: 18px;
+
+    line-height: 2.3;
+
+    color: #bbb;
+
+    margin-bottom: 50px;
+}
+
+.ending-goodbye {
+    font-size: clamp(35px, 7vw, 80px);
+
+    letter-spacing: 15px;
+
+    font-family: "Libre Baskerville", serif;
+
+    font-weight: 400;
+}
+
+.ending-final {
+    margin-top: 55px;
+
+    font-size: 9px;
+
+    letter-spacing: 5px;
+
+    color: #555;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 600px) {
+
+    .warning-title {
+        letter-spacing: 4px;
+    }
+
+    .warning-text {
+        font-size: 10px;
+    }
+
+    .credit {
+        margin-bottom: 30vh;
+    }
+
+    .credit p {
+        font-size: 14px;
+    }
+
+    .credit h1 {
+        letter-spacing: 5px;
+    }
+
+    .opening-title h1 {
+        letter-spacing: 8px;
+    }
+
+    #controls {
+        bottom: 20px;
+        right: 20px;
+    }
+
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- =====================================
+     WARNING
+===================================== -->
+
+<section id="warning">
+
+    <div class="warning-box">
+
+        <div class="warning-symbol">
+            ⚠
+        </div>
+
+        <div class="warning-title">
+            WARNING
+        </div>
+
+        <div class="warning-text">
+
+            Please leave.
+
+            <br><br>
+
+            This project is somehow a disturbing diary.
+            It contains dark themes, difficult memories,
+            family conflict, toxic relationships,
+            and references to experiences that may be
+            uncomfortable for some viewers.
+
+            <br><br>
+
+            Viewer discretion is advised.
+
+            <br><br>
+
+            I'm sorry.
+
+        </div>
+
+        <div class="warning-small">
+            PLEASE RECONSIDER
+        </div>
+
+        <button id="accept">
+            ACCEPT
+        </button>
+
+    </div>
+
+</section>
+
+<!-- =====================================
+     MAIN EXPERIENCE
+===================================== -->
+
+<main id="experience">
+
+<div id="background"></div>
+
+<div id="grain"></div>
+
+<div id="vignette"></div>
+
+
+<!-- Opening title -->
+
+<div id="opening-title">
+
+    <div>
+
+        <h1>The End?</h1>
+
+        <span>
+            MY ENDING TO MY BOOK OF LIFE
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- Credits -->
+
+<div id="credits-window">
+
+    <div id="credits">
+
+
+        <!-- INTRO -->
+
+        <section class="credit">
+
+            <h2>
+                PRESENTED BY
+            </h2>
+
+            <h1>
+                AIKU RYOTA
+            </h1>
+
+            <p class="tiny">
+                My memories.
+            </p>
+
+        </section>
+
+
+        <!-- BEGINNING -->
+
+        <section class="credit year">
+
+            <h1>
+                DECEMBER 2, 2008
+            </h1>
+
+            <p>
+
+                The day I was born.
+
+                <br><br>
+
+                Two people from completely different lives
+                had somehow ended up together.
+
+                <br><br>
+
+                One came from a poor village,
+                but from a family that was happy.
+
+                <br><br>
+
+                The other came from a rich family
+                with a broken marriage.
+
+                <br><br>
+
+                And then...
+
+                <br><br>
+
+                "Oh. A male baby."
+
+                <br><br>
+
+                Three daughters had come before me.
+
+            </p>
+
+        </section>
+
+
+        <!-- CHILDHOOD -->
+
+        <section class="credit">
+
+            <h2>
+                CHAPTER I
+            </h2>
+
+            <h1>
+                BEFORE I KNEW
+            </h1>
+
+            <p>
+
+                Before school,
+                I was raised as someone who was expected
+                to always be useful.
+
+                <br><br>
+
+                "Ryo, Ryo, can you get that?"
+
+                <br><br>
+
+                "Ryo, that's too heavy."
+
+                <br><br>
+
+                "It's fine. Do it for me."
+
+                <br><br>
+
+                And more.
+
+                <br><br>
+
+                People called it a happy family.
+                <br>
+                A rich family.
+                <br>
+                A lucky family.
+
+                <br><br>
+
+                Lucky to have three nice older sisters,
+                they said.
+
+                <br><br>
+
+                I believed them.
+
+            </p>
+
+        </section>
+
+
+        <!-- FAMILY -->
+
+        <section class="credit">
+
+            <h2>
+                CHAPTER II
+            </h2>
+
+            <h1>
+                FAMILY
+            </h1>
+
+            <p>
+
+                My parents were too busy managing
+                their company.
+
+                <br><br>
+
+                Coming home sometimes felt like
+                I was interrupting their work.
+
+                <br><br>
+
+                Then there were my three older sisters.
+
+                <br><br>
+
+                In my eyes,
+                they were everything a younger brother
+                could ask for.
+
+                <br><br>
+
+                Smart.
+                <br>
+                Athletic.
+                <br>
+                Funny.
+                <br>
+                Talented.
+
+                <br><br>
+
+                Everything.
+
+                <br><br>
+
+                And then...
+
+                <br><br>
+
+                Strict.
+                <br>
+                Cruel.
+                <br>
+                Cold.
+                <br>
+                Hypocritical.
+
+                <br><br>
+
+                Haaa...
+
+                <br><br>
+
+                Maybe this is what they mean when they say:
+
+                <br><br>
+
+                Don't judge a family
+                before looking inside it.
+
+                <br><br>
+
+                "Rich family."
+                <br>
+                "Nepo baby."
+                <br>
+                "Born lucky."
+
+            </p>
+
+        </section>
+
+
+        <!-- SCHOOL -->
+
+        <section class="credit">
+
+            <h2>
+                CHAPTER III
+            </h2>
+
+            <h1>
+                SCHOOL LIFE
+            </h1>
+
+            <p>
+
+                I was one of the top students in my class.
+
+                <br><br>
+
+                Always close to the top.
+                <br>
+                Never quite number one.
+
+                <br><br>
+
+                For four years,
+                I became the person people came to
+                when they needed someone to listen.
+
+                <br><br>
+
+                A school therapist.
+                <br>
+                Three awards.
+
+                <br><br>
+
+                I was athletic too.
+
+                <br><br>
+
+                A closet full of trophies.
+
+                <br><br>
+
+                Proof that I could do something right.
+
+                <br><br>
+
+                But apparently...
+
+                <br><br>
+
+                I wasn't good enough for first place.
+
+                <br><br>
+
+                "Disappointment."
+
+                <br><br>
+
+                A therapist who could help people
+                but couldn't figure out how to help himself.
+
+                <br><br>
+
+                I was pushed into being athletic
+                because I wanted my father's approval.
+
+                <br><br>
+
+                I wanted more friends.
+
+                <br><br>
+
+                But trust became difficult.
+                <br>
+                Attachment became difficult.
+
+                <br><br>
+
+                And keeping myself together
+                became even harder.
+
+            </p>
+
+        </section>
+
+
+        <!-- INTERNET -->
+
+        <section class="credit">
+
+            <h2>
+                CHAPTER IV
+            </h2>
+
+            <h1>
+                ANOTHER WORLD
+            </h1>
+
+            <p>
+
+                Somewhere around thirteen or fourteen,
+                I discovered the internet.
+
+                <br><br>
+
+                I didn't have a phone.
+
+                <br><br>
+
+                But I had a computer.
+
+                <br><br>
+
+                Two years of gaming.
+
+                <br><br>
+
+                Two years of finding another world
+                outside my own.
+
+                <br><br>
+
+                Then, at fifteen,
+                I was given an old phone.
+
+                <br><br>
+
+                A hand-me-down.
+
+                <br><br>
+
+                Strict parental controls.
+                <br>
+                A curfew.
+                <br>
+                8 PM until 7 AM.
+
+                <br><br>
+
+                And then...
+
+                <br><br>
+
+                Discord.
+
+                <br><br>
+
+                I found friends.
+
+                <br><br>
+
+                A group that started around 2021
+                and somehow lasted until now.
+
+                <br><br>
+
+                I miss them.
+
+                <br><br>
+
+                They grew up before I did.
+
+                <br><br>
+
+                Life kept moving.
+
+            </p>
+
+        </section>
+
+
+        <!-- LOVE -->
+
+        <section class="credit">
+
+            <h2>
+                THE PERSON
+            </h2>
+
+            <h1>
+                SOMETHING I FOUND
+            </h1>
+
+            <p>
+
+                Dating in real life
+                was never really allowed for me.
+
+                <br><br>
+
+                I tried.
+
+                <br><br>
+
+                I got punished for it.
+
+                <br><br>
+
+                So the internet became my chance.
+
+                <br><br>
+
+                To me,
+                dating was never about finding
+                some perfect person.
+
+                <br><br>
+
+                I only wanted someone
+                who would love me
+                and understand me.
+
+                <br><br>
+
+                Maybe someone like that
+                didn't exist.
+
+                <br><br>
+
+                Or maybe they were simply
+                too far out of reach.
+
+                <br><br>
+
+                I didn't give up.
+
+                <br><br>
+
+                I had too much hope in humanity.
+
+                <br><br>
+
+                I was tossed aside
+                more times than I want to remember.
+
+                <br><br>
+
+                And then I joined a matchmaking server.
+
+                <br><br>
+
+                I found friends.
+
+                <br><br>
+
+                I found someone.
+
+                <br><br><br>
+
+                <span class="my-love">
+                    MY LOVE
+                </span>
+
+            </p>
+
+        </section>
+
+
+        <!-- FEBRUARY 2026 -->
+
+        <section class="credit">
+
+            <h2>
+                FEBRUARY 2, 2026
+            </h2>
+
+            <h1>
+                HER
+            </h1>
+
+            <p>
+
+                My memories are fuzzy now.
+
+                <br><br>
+
+                But I remember meeting her.
+
+                <br><br>
+
+                The best person
+                I had ever met.
+
+                <br><br>
+
+                Twice as strong as me.
+                <br>
+                Funny.
+                <br>
+                Loving.
+                <br>
+                Strong.
+
+                <br><br>
+
+                And most importantly...
+
+                <br><br>
+
+                She understood people.
+
+                <br><br>
+
+                She made me regain hope.
+
+                <br><br>
+
+                For a while,
+                life was happy.
+
+                <br><br>
+
+                My sisters even loved
+                the new obedient me.
+
+                <br><br>
+
+                I was happy.
+
+                <br><br>
+
+                No matter how many commands
+                they threw at me,
+                I was happy.
+
+                <br><br>
+
+                For once,
+                I thought I had found something
+                worth holding onto.
+
+            </p>
+
+        </section>
+
+
+        <!-- BROKEN -->
+
+        <section class="credit">
+
+            <h2>
+                ARCHIVE
+            </h2>
+
+            <h1>
+                THE PART I DON'T TALK ABOUT
+            </h1>
+
+            <p>
+
+                Before the internet,
+                life was already difficult.
+
+                <br><br>
+
+                Not because we were poor.
+
+                <br><br>
+
+                We weren't.
+
+                <br><br>
+
+                We lived in a villa.
+
+                <br><br>
+
+                Five cars.
+
+                <br><br>
+
+                Eventually,
+                they didn't even fit through the gates anymore.
+
+                <br><br>
+
+                Money was never really the problem.
+
+                <br><br>
+
+                My family was.
+
+                <br><br>
+
+                There were things behind those walls
+                that nobody outside the family knew about.
+
+                <br><br>
+
+                Being hit was called a
+                <span class="dark-memory">
+                    "loving lesson."
+                </span>
+
+                <br><br>
+
+                Being controlled was called discipline.
+
+                <br><br>
+
+                Being hurt was something
+                I was expected to forgive.
+
+                <br><br>
+
+                Someone I was supposed to trust
+                crossed a boundary
+                that should never have been crossed.
+
+                <br><br>
+                i was 
+                <span class="dark-memory">
+                   sexually assaulted
+                </span>
+                by my own flesh and blood
+                <br><br>
+
+                I was scared to tell anyone.pictures were taken.
+
+                <br><br>
+
+                I stayed quiet.
+
+                <br><br>
+                
+                3 <span class="dark-memory">
+                    "suicide."
+                attempts failed.
+             
+                <br><br>
+                
+               uncountble amount of<span class="dark-memory">
+                    "self harm"
+               is done and still doing now
+
+                <br><br> 
+
+                I carried it alone
+                for longer than I should have.
+
+                <br><br>
+
+                Everyone else could still look at us
+                and see a normal family.
+
+                <br><br>
+
+                "Rich family."
+                <br>
+                "Nepo baby."
+                <br>
+                "Born lucky."
+
+                <br><br>
+
+                They saw the villa.
+                <br>
+                They saw the cars.
+                <br>
+                They saw the money.
+
+                <br><br>
+
+                They never saw
+                what happened when nobody else
+                was looking.
+
+            </p>
+
+        </section>
+
+
+        <!-- LEAVING -->
+
+        <section class="credit">
+
+            <h2>
+                CHAPTER V
+            </h2>
+
+            <h1>
+                LEAVING
+            </h1>
+
+            <p>
+
+                Eventually,
+                I moved far away from my family.
+
+                <br><br>
+
+                The excuse was simple:
+
+                <br><br>
+
+                Taking care of Mom's other branch
+                of the company in Malaysia.
+
+                <br><br>
+
+                My sisters were furious.
+
+                <br><br>
+
+                They took away my allowance.
+
+                <br><br>
+
+                So I survived on my own paycheck.
+
+                <br><br>
+
+                My own house.
+                <br>
+                My own food.
+                <br>
+                My own vehicle.
+
+                <br><br>
+
+                My own life.
+
+                <br><br>
+
+                It was tiring.
+
+                <br><br>
+
+                Really tiring.
+
+                <br><br>
+
+                But it was mine.
+
+            </p>
+
+        </section>
+
+
+        <!-- Now? -->
+
+        <section class="credit year">
+
+            <h1>
+                2026
+            </h1>
+
+            <p>
+
+                And now...
+
+                <br><br>
+
+                University is coming.
+
+                <br><br>
+
+                A new chapter.
+
+                <br><br>
+
+                A new place.
+
+                <br><br>
+
+                A new life.
+
+                <br><br>
+
+                Everyone keeps saying
+                I'm moving forward.
+
+                <br><br>
+
+                Maybe I am.
+
+                <br><br>
+
+                But the more the days passed,
+                the less I felt like myself.
+
+                <br><br>
+
+                I started looking at myself
+                and wondering who I had become.
+
+            </p>
+
+        </section>
+
+
+        
+
+        <!-- FAREWELL -->
+
+        <section class="credit">
+
+            <h2>
+                BEFORE I GO
+            </h2>
+
+            <h1>
+                THANK YOU
+            </h1>
+
+            <p>
+
+                Thank you
+                to every person,
+                every place,
+                every moment,
+                every mistake,
+                and every stupid little thing
+                that brought me here.
+
+                <br><br>
+
+                The people who stayed.
+
+                <br><br>
+
+                The people who left.
+
+                <br><br>
+
+                The people I met for only
+                a short part of my life.
+
+                <br><br>
+
+                The friends from school.
+
+                <br><br>
+
+                The friends from the internet.
+
+                <br><br>
+
+                The people who made me laugh
+                when I didn't feel like laughing.
+
+                <br><br>
+
+                All of you became part of the story.
+
+                <br><br>
+
+
+            </p>
+
+        </section>
+
+
+        <!-- LAST MESSAGE -->
+
+        <section class="credit">
+
+            <h1>
+                GOODBYE
+            </h1>
+
+            <p>
+
+                I Was Never Strong."because you’re amazing and talented"im not.im sorry.
+
+                <br><br>
+
+                 im tired.yes this website is some kind of a diary.but i only release it if something happens to me or if im killing myself.if i fail to do it again im moving on.tried so hard typing so casually forgot wasnt typing like myself soo.also why this song?i love this song.my sisters played it once and then never.i founded it and keep playing when im feeling a bit sad all the times.one last fucking also lowkey know this website is cringe but what do you expect :sob: bout to kill myself soon and still caring about ppl feelings lol.idk why i do this but i feel like i found peoples too special to let go without a message.
+
+                <br><br>
+
+                The person I was
+                doesn't have to disappear.
+
+                <br><br>
+
+                He can come with me.
+
+            </p>
+
+        </section>
+
+
+        <!-- END -->
+
+        <section class="credit">
+
+            <p class="tiny">
+
+                END OF CHAPTER ONE
+
+                <br><br><br>
+
+                M stay till the end theres a special message for you
+
+            </p>
+
+        </section>
+
+
+    </div>
+
+</div>
+
+
+<!-- Controls -->
+
+<div id="controls">
+
+    <div id="speed-control">
+        SPEED ×1
+    </div>
+
+    <div id="music-control">
+        MUSIC — ON
+    </div>
+
+</div>
+
+
+<!-- Ending -->
+
+<section id="ending">
+
+    <div class="ending-content">
+
+        <p>
+            My Shitty Life<br>
+            Ha my parents better get a refund for that university when im dead cause if not holy scam
+        </p>
+
+        <div class="ending-goodbye">
+            Bye Byee
+        </div>
+
+        <div class="ending-final">
+            sorry M i cant do ts anymore.i love you so so so much but i cant do ts anymore.
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+<audio id="music" preload="auto">
+    <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+
+/* =====================================
+   YOUR PHOTOS
+===================================== */
+
+const photos = [
+    "01.jpg",
+    "02.jpg",
+    "03.jpg",
+    "04.jpg",
+    "05.jpg",
+    "06.jpg",
+    "07.jpg",
+    "08.jpg",
+    "09.jpg"
+];
+
+
+/* =====================================
+   ELEMENTS
+===================================== */
+
+const warning = document.getElementById("warning");
+const accept = document.getElementById("accept");
+
+const experience = document.getElementById("experience");
+
+const background = document.getElementById("background");
+
+const openingTitle = document.getElementById("opening-title");
+
+const credits = document.getElementById("credits");
+
+const music = document.getElementById("music");
+
+const musicControl = document.getElementById("music-control");
+
+const speedControl = document.getElementById("speed-control");
+
+const controls = document.getElementById("controls");
+
+const ending = document.getElementById("ending");
+
+
+/* =====================================
+   SETTINGS
+===================================== */
+
+let started = false;
+
+let scrollPosition = 0;
+
+let lastTime = null;
+
+let photoIndex = 0;
+
+
+/*
+    Credit scrolling speeds.
+
+    These ONLY affect the credits.
+    Music speed is never changed.
+*/
+
+const creditSpeeds = [
+    {
+        speed: 0.018,
+        label: "SPEED ×1"
+    },
+
+    {
+        speed: 0.036,
+        label: "SPEED ×2"
+    },
+
+    {
+        speed: 0.072,
+        label: "SPEED ×4"
+    },
+
+    {
+        speed: 0.144,
+        label: "SPEED ×8"
+    }
+];
+
+let creditSpeedIndex = 0;
+
+let scrollSpeed =
+    creditSpeeds[creditSpeedIndex].speed;
+
+
+/* =====================================
+   START
+===================================== */
+
+accept.addEventListener("click", () => {
+
+    if (started) return;
+
+    started = true;
+
+    warning.classList.add("hidden");
+
+    setTimeout(() => {
+
+        experience.classList.add("active");
+
+        music.volume = 0.7;
+
+        music.play().catch(() => {
+            console.log("Music playback was blocked.");
+        });
+
+        controls.classList.add("visible");
+
+        setTimeout(() => {
+            openingTitle.classList.add("visible");
+        }, 1000);
+
+        setTimeout(() => {
+            openingTitle.classList.remove("visible");
+        }, 6000);
+
+        setTimeout(() => {
+            startCredits();
+        }, 5000);
+
+    }, 1200);
+
+});
+
+
+/* =====================================
+   CREDIT SPEED CONTROL
+===================================== */
+
+speedControl.addEventListener("click", () => {
+
+    creditSpeedIndex++;
+
+    if (creditSpeedIndex >= creditSpeeds.length) {
+        creditSpeedIndex = 0;
+    }
+
+    scrollSpeed =
+        creditSpeeds[creditSpeedIndex].speed;
+
+    speedControl.textContent =
+        creditSpeeds[creditSpeedIndex].label;
+
+});
+
+
+/* =====================================
+   MUSIC CONTROL
+===================================== */
+
+musicControl.addEventListener("click", () => {
+
+    if (music.paused) {
+
+        music.play();
+
+        musicControl.textContent = "MUSIC — ON";
+
+    } else {
+
+        music.pause();
+
+        musicControl.textContent = "MUSIC — OFF";
+
+    }
+
+});
+
+
+/* =====================================
+   BACKGROUND PHOTOS
+===================================== */
+
+function changePhoto() {
+
+    if (photos.length === 0) return;
+
+    background.style.backgroundImage =
+        `url("${photos[photoIndex]}")`;
+
+    photoIndex++;
+
+    if (photoIndex >= photos.length) {
+        photoIndex = 0;
+    }
+
+}
+
+
+setInterval(() => {
+
+    if (!started) return;
+
+    changePhoto();
+
+}, 13000);
+
+
+/* =====================================
+   CREDITS SCROLL
+===================================== */
+
+function startCredits() {
+
+    changePhoto();
+
+    requestAnimationFrame(animateCredits);
+
+}
+
+
+function animateCredits(time) {
+
+    if (!lastTime) {
+        lastTime = time;
+    }
+
+    const delta = time - lastTime;
+
+    lastTime = time;
+
+    scrollPosition +=
+        scrollSpeed * delta;
+
+    credits.style.transform =
+        `translateY(-${scrollPosition}px)`;
+
+
+    const totalHeight =
+        credits.scrollHeight;
+
+    const screenHeight =
+        window.innerHeight;
+
+    if (
+        scrollPosition >
+        totalHeight -
+        screenHeight * 1.3
+    ) {
+
+        finishExperience();
+
+        return;
+
+    }
+
+    requestAnimationFrame(animateCredits);
+
+}
+
+
+/* =====================================
+   END
+===================================== */
+
+function finishExperience() {
+
+    const fade = setInterval(() => {
+
+        if (music.volume > 0.02) {
+
+            music.volume -= 0.01;
+
+        } else {
+
+            music.volume = 0;
+
+            music.pause();
+
+            clearInterval(fade);
+
+        }
+
+    }, 100);
+
+
+    setTimeout(() => {
+
+        ending.classList.add("visible");
+
+    }, 4000);
+
+}
+
+
+/* =====================================
+   KEYBOARD SHORTCUT
+===================================== */
+
+document.addEventListener("keydown", (event) => {
+
+    /*
+       Space = pause/play music
+    */
+
+    if (event.code === "Space") {
+
+        event.preventDefault();
+
+        if (music.paused) {
+
+            music.play();
+
+            musicControl.textContent =
+                "MUSIC — ON";
+
+        } else {
+
+            music.pause();
+
+            musicControl.textContent =
+                "MUSIC — OFF";
+
+        }
+
+    }
+
+
+    /*
+       Arrow Up = speed up credits
+       Arrow Down = cycle backwards
+    */
+
+    if (event.code === "ArrowUp") {
+
+        creditSpeedIndex++;
+
+        if (creditSpeedIndex >= creditSpeeds.length) {
+            creditSpeedIndex = 0;
+        }
+
+        scrollSpeed =
+            creditSpeeds[creditSpeedIndex].speed;
+
+        speedControl.textContent =
+            creditSpeeds[creditSpeedIndex].label;
+
+    }
+
+
+    if (event.code === "ArrowDown") {
+
+        creditSpeedIndex--;
+
+        if (creditSpeedIndex < 0) {
+            creditSpeedIndex =
+                creditSpeeds.length - 1;
+        }
+
+        scrollSpeed =
+            creditSpeeds[creditSpeedIndex].speed;
+
+        speedControl.textContent =
+            creditSpeeds[creditSpeedIndex].label;
+
+    }
+
+});
+
+
+/* =====================================
+   PRELOAD PHOTOS
+===================================== */
+
+photos.forEach(src => {
+
+    const img = new Image();
+
+    img.src = src;
+
+});
+
+</script>
+
+</body>
+</html>
